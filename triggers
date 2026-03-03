@@ -1,0 +1,13 @@
+ CREATE TRIGGER update_task_timestamp
+    -> BEFORE UPDATE ON tasks
+    -> FOR EACH ROW
+    -> SET NEW.updated_at = NOW();
+ CREATE TRIGGER prevent_delete_completed
+    -> BEFORE DELETE ON tasks
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     IF OLD.status = 'COMPLETED' THEN
+    ->         SIGNAL SQLSTATE '45000'
+    ->         SET MESSAGE_TEXT = 'Cannot delete completed task';
+    ->     END IF;
+    -> END$$
