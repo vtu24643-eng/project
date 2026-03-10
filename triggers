@@ -11,3 +11,53 @@
     ->         SET MESSAGE_TEXT = 'Cannot delete completed task';
     ->     END IF;
     -> END$$
+week 2 
+s6.1:
+
+ CREATE TRIGGER before_user_insert
+    -> BEFORE INSERT ON users
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     IF NEW.age < 18 THEN
+    ->         SIGNAL SQLSTATE '45000'
+    ->         SET MESSAGE_TEXT = 'User must be at least 18 years old';
+    ->     END IF;
+    -> END //
+s6.2:
+CREATE TRIGGER update_order_total
+AFTER INSERT ON order_items
+FOR EACH ROW
+BEGIN
+    UPDATE orders
+    SET total_amount = total_amount +
+        (SELECT price FROM dishes WHERE id = NEW.dish_id) * NEW.quantity
+    WHERE id = NEW.order_id;
+END //
+
+s6.3:
+CREATE TRIGGER set_user_created_at
+BEFORE INSERT ON users
+FOR EACH ROW
+BEGIN
+    SET NEW.created_at = CURRENT_TIMESTAMP;
+END //
+
+s6.4:
+CREATE TRIGGER check_salary_before_insert
+BEFORE INSERT ON employee
+FOR EACH ROW
+BEGIN
+    IF NEW.salary < 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Salary cannot be negative';
+    END IF;
+END //
+
+s6.5:
+CREATE TRIGGER employee_update_audit
+AFTER UPDATE ON employee
+FOR EACH ROW
+BEGIN
+    INSERT INTO employee_audit(emp_id, old_name, old_salary)
+    VALUES (OLD.id, OLD.name, OLD.salary);
+END //
