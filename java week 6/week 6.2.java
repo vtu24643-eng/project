@@ -30,3 +30,31 @@ public class TaskController {
   }
   
 }
+
+//TaskService
+package com.yourpackage.service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.yourpackage.model.Task;
+import com.yourpackage.repository.TaskRepository;
+
+import java.util.List;
+
+@Service
+public class TaskService {
+
+    @Autowired
+    private TaskRepository repo;
+
+    public Task addTask(Task t) {
+        return repo.save(t);
+    }
+
+    public List<Task> getAllTasks() {
+        return repo.findAll();
+    }
+
+    public Task getTaskById(int id) {
+        return repo.findById(id).orElse(null);
+    }
+}
